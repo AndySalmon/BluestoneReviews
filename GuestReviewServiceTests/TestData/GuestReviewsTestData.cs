@@ -1,17 +1,19 @@
 ﻿using bluestone.guests.business.Services.Publishing;
 using bluestone.guests.business.Services.Reviews.V1;
-using bluestone.guests.business.Validations;
 using bluestone.guests.data;
 using bluestone.guests.data.Repositories;
 using bluestone.guests.data.Repositories.Interfaces;
 using bluestone.guests.model.Entities;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using bluestoneguests.api.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework.Internal;
 using System.Text.Json;
 
 namespace GuestReviewServiceTests.TestData
-{
-    public class GuestReviewsTestData : IDisposable
+  {
+  public class GuestReviewsTestData : IDisposable
     {
 
     public GuestReviewsTestData()
@@ -46,9 +48,9 @@ namespace GuestReviewServiceTests.TestData
 
 
 
-    public async Task<GuestReviewService> CreateStableGuestReviewService()
-      {
-      var options = new DbContextOptionsBuilder<GuestReviewsDbContext>()
+      public async Task<IGuestReviewService> CreateStableGuestReviewService()
+        {
+        var options = new DbContextOptionsBuilder<GuestReviewsDbContext>()
                         .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
                         .Options;
 
@@ -78,6 +80,39 @@ namespace GuestReviewServiceTests.TestData
 
       return new GuestReviewService(_workUnit, _reviewPublisher);
       }
+
+
+
+
+
+
+
+
+
+
+
+
+    public async Task<ReviewsController> CreateStableReviewsAPI()
+      {
+      IGuestReviewService _reviewService = await CreateStableGuestReviewService();
+      var loggerMock = new Mock<ILogger<ReviewsController>>();
+
+      ReviewsController _controller = new ReviewsController(
+               logger: loggerMock.Object,
+               reviewService: _reviewService
+               );
+
+      return _controller;
+      }
+
+
+
+
+
+
+
+
+
 
 
 

@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bluestone.Guests.Business\bluestone.guests.business.csproj" />
+    <ProjectReference Include="..\bluestoneguests.api\bluestoneguests.api.csproj" />
   </ItemGroup>
 
   <ItemGroup>

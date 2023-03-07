@@ -22,7 +22,7 @@ namespace bluestoneguests.api.Controllers
 
 
     [HttpGet("all")]
-    public async Task<IEnumerable<ReviewResponse>> Get()
+    public async Task<IEnumerable<ReviewResponse>> GetAllReviews()
       {
       return await _reviewService.GetAllReviewsAsync();
       }

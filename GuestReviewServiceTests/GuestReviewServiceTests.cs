@@ -29,7 +29,7 @@ namespace GuestReviewServiceTests
       await Task.CompletedTask;
 
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
 
       // Act
@@ -49,7 +49,7 @@ namespace GuestReviewServiceTests
     public async Task GetAllGuestsAsync_ShouldReturnOnlyNumberStartedWith()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
 
       // Act
@@ -70,7 +70,7 @@ namespace GuestReviewServiceTests
     public async Task GetAllGuestsAsync_ShouldReturn2ReviewsForGuest1()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
 
       // Act
@@ -97,7 +97,7 @@ namespace GuestReviewServiceTests
     public async Task GetGuestByEmailAsync_ShouldReturn0Reviews_ForGuestRussPlumb()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
 
       // Act
@@ -119,7 +119,7 @@ namespace GuestReviewServiceTests
     public async Task GetAllReviewsAsync_ShouldReturnOnlyNumberStartedWith()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
 
       // Act
@@ -139,7 +139,7 @@ namespace GuestReviewServiceTests
     public async Task GetGuestByIDAsync_ShouldReturnGuest_WhenGuestExists()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
       Guid _guestID = _testReviewData.GuestData[1].ID;
 
 
@@ -162,7 +162,7 @@ namespace GuestReviewServiceTests
     public async Task GetGuestByIDAsync_ShouldReturnNothing_WhenGuestDoesNotExists()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
 
       // Act
@@ -186,7 +186,7 @@ namespace GuestReviewServiceTests
     public async Task CreateReviewAsync_UsingGuestID_ShouldCreateNewReview()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
       int _expectedReviewCount = _testReviewData.InitialReviewCount + 1;
 
@@ -197,7 +197,7 @@ namespace GuestReviewServiceTests
         GuestID = _guestID,
         Title = "Fantastic Lodge",
         Body = "We had a fantastic stay at Bluestone.",
-        Score = 1,
+        Score = 5,
         };
 
       ModelStateWrapper _modelStateWrapper = new ModelStateWrapper(new ModelStateDictionary());
@@ -235,7 +235,7 @@ namespace GuestReviewServiceTests
         GuestEmail = _guestEmail,
         Title = "Fantastic Lodge",
         Body = "We had a fantastic stay at Bluestone.",
-        Score = 1,
+        Score = 4,
         };
 
       ModelStateDictionary _modelState = new ModelStateDictionary();
@@ -269,7 +269,7 @@ namespace GuestReviewServiceTests
     public async Task CreateReviewAsync_UsingUnknownEmail_ShouldFailToCreateNewGuestAndReview()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
       // There should be no change in the expected results as the method is expected to fail.
 
@@ -283,7 +283,7 @@ namespace GuestReviewServiceTests
         GuestEmail = _guestEmail,
         Title = "Fantastic Lodge",
         Body = "We had a fantastic stay at Bluestone.",
-        Score = 1,
+        Score = 5,
         AllowCreateNewGuest = false
         };
 
@@ -318,7 +318,7 @@ namespace GuestReviewServiceTests
     public async Task CreateReviewAsync_UsingUnknownEmail_ShouldCreateNewGuestAndReview()
       {
       // Arrange
-      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
       int _expectedGuestCount = _testReviewData.InitialGuestCount + 1;
       int _expectedReviewCount = _testReviewData.InitialReviewCount + 1;
@@ -330,7 +330,7 @@ namespace GuestReviewServiceTests
         GuestEmail = _guestEmail,
         Title = "Fantastic Lodge",
         Body = "We had a fantastic stay at Bluestone.",
-        Score = 1,
+        Score = 4,
         AllowCreateNewGuest = true
         };
 

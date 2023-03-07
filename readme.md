@@ -14,10 +14,11 @@ This repository will be made private again once it is no longer required for app
 
 There are many aspects of this project that are not 100% complete as it is primarily an example for assessment.
 
-- Many more tests could have been written.  So far I haven't written any for the API.
+- Many more tests could have been written.  
 - The social media publishers are simply placeholders sitting behind a facade that will be responsible for publishing. In a real it will most likely post a message to a message queue which would in turn callback this or another app to do the publishing.
 - The API currently doesn't support paging or sorting.
-
+- Review Dates 
+- Allow enter Name when creating a new review
 
 ## Database
 
