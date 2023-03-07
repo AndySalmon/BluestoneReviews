@@ -23,6 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bluestoneguests.api", "blue
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "bluestoneguests.web", "bluestoneguests.web\bluestoneguests.web.csproj", "{E912109C-6893-4A1A-BA66-D6055FB375E9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".notes", ".notes", "{BC1EDDAD-88D1-48A9-B984-50EE3C45FE12}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
