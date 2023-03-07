@@ -6,6 +6,8 @@ namespace bluestone.guests.business.Abstractions.V1
     {
     public Guid GuestID { get; set; }
 
+    public string GuestEmail { get; set; }
+
 
     public string Title { get; set; } = "";
 
@@ -14,6 +16,13 @@ namespace bluestone.guests.business.Abstractions.V1
 
 
     public int Score { get; set; } = 0;
+
+
+
+    public bool AllowCreateNewGuest { get; set; } = false;
+
+
+
 
 
 
@@ -40,6 +49,13 @@ namespace bluestone.guests.business.Abstractions.V1
       if (Score < 0 || Score > 5)
         validationDictionary.AddError("Score", "Review Score must be between 1 and 5");
 
+
+      if (GuestID == Guid.Empty)
+        {
+        if (EmailValidator.IsValidEmailAddress(GuestEmail) == false)
+          validationDictionary.AddError("Guest", "Either the Guests ID or Gmail must be specified");
+
+        }
 
       }
 

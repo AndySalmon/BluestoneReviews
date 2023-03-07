@@ -34,6 +34,7 @@ namespace bluestone.guests.business.Validations
         var arr = email.Split('@', StringSplitOptions.RemoveEmptyEntries);
         isValid = arr.Length == 2 && arr[1].Contains(".");
         }
+
       return isValid;
       }
     }

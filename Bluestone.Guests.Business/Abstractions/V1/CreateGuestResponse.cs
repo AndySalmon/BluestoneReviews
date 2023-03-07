@@ -8,5 +8,6 @@ namespace bluestone.guests.business.Abstractions.V1
   {
   public class CreateGuestResponse : ResponseBase
     {
+
     }
   }

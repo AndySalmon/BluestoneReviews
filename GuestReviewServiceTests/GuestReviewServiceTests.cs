@@ -4,9 +4,9 @@ using bluestone.guests.business.Validations;
 using bluestone.guests.model.Entities;
 using GuestReviewServiceTests.TestData;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 using NUnit.Framework;
-
-
+using System.Text.Json;
 
 namespace GuestReviewServiceTests
 {
@@ -183,12 +183,12 @@ namespace GuestReviewServiceTests
 
 
     [Test]
-    public async Task CreateReviewAsync_UsingGuestID_ShouldReturnSuccess()
+    public async Task CreateReviewAsync_UsingGuestID_ShouldCreateNewReview()
       {
       // Arrange
       GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
 
-      int _expectedResult = _testReviewData.InitialReviewCount + 1;
+      int _expectedReviewCount = _testReviewData.InitialReviewCount + 1;
 
       Guid _guestID = _testReviewData.GuestData[1].ID;
 
@@ -209,11 +209,147 @@ namespace GuestReviewServiceTests
 
       // Assert
       Assert.True(_modelStateWrapper.IsValid);
-      Assert.AreEqual(_expectedResult, await _sut.CountReviews());
+      Assert.AreEqual(_expectedReviewCount, await _sut.CountReviews());
       }
 
 
 
+
+
+
+
+
+
+    [Test]
+    public async Task CreateReviewAsync_UsingGuestEmail_ShouldCreateNewReview()
+      {
+      // Arrange
+      IGuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+
+      int _expectedReviewCount = _testReviewData.InitialReviewCount + 1;
+
+      string _guestEmail = _testReviewData.GuestData[1].Email;
+
+      CreateReviewRequest _request = new CreateReviewRequest()
+        {
+        GuestEmail = _guestEmail,
+        Title = "Fantastic Lodge",
+        Body = "We had a fantastic stay at Bluestone.",
+        Score = 1,
+        };
+
+      ModelStateDictionary _modelState = new ModelStateDictionary();
+      ModelStateWrapper _modelStateWrapper = new ModelStateWrapper(_modelState);
+
+
+      // Act
+      CreateReviewResponse _response = (await _sut.CreateReview(_request, _modelStateWrapper));
+
+      // Assert
+
+      Console.Write(JsonSerializer.Serialize<ModelStateDictionary>(_modelState));
+
+      Assert.True(_modelStateWrapper.IsValid);
+      Assert.AreEqual(_expectedReviewCount, await _sut.CountReviews());
+      }
+
+
+
+
+
+
+
+
+
+    /// <summary>
+    /// This test is expecting to fail by providing an unknown email address with AllowCreateNewGuest == false 
+    /// </summary>
+
+    [Test]
+    public async Task CreateReviewAsync_UsingUnknownEmail_ShouldFailToCreateNewGuestAndReview()
+      {
+      // Arrange
+      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+
+      // There should be no change in the expected results as the method is expected to fail.
+
+      int _expectedGuestCount = _testReviewData.InitialGuestCount;
+      int _expectedReviewCount = _testReviewData.InitialReviewCount;
+
+      string _guestEmail = "ttennanta@seesaa.net";
+
+      CreateReviewRequest _request = new CreateReviewRequest()
+        {
+        GuestEmail = _guestEmail,
+        Title = "Fantastic Lodge",
+        Body = "We had a fantastic stay at Bluestone.",
+        Score = 1,
+        AllowCreateNewGuest = false
+        };
+
+      ModelStateDictionary _modelState = new ModelStateDictionary();
+      ModelStateWrapper _modelStateWrapper = new ModelStateWrapper(_modelState);
+
+
+      // Act
+      CreateReviewResponse _response = (await _sut.CreateReview(_request, _modelStateWrapper));
+
+
+      // Assert
+
+      Console.Write(JsonSerializer.Serialize<ModelStateDictionary>(_modelState));
+
+      Assert.False(_modelStateWrapper.IsValid);
+      Assert.AreEqual(_expectedGuestCount, await _sut.CountGuests());
+      Assert.AreEqual(_expectedReviewCount, await _sut.CountReviews());
+      }
+
+
+
+
+
+
+
+
+
+
+
+    [Test]
+    public async Task CreateReviewAsync_UsingUnknownEmail_ShouldCreateNewGuestAndReview()
+      {
+      // Arrange
+      GuestReviewService _sut = await _testReviewData.CreateStableGuestReviewService();
+
+      int _expectedGuestCount = _testReviewData.InitialGuestCount + 1;
+      int _expectedReviewCount = _testReviewData.InitialReviewCount + 1;
+
+      string _guestEmail = "ttennanta@seesaa.net";
+
+      CreateReviewRequest _request = new CreateReviewRequest()
+        {
+        GuestEmail = _guestEmail,
+        Title = "Fantastic Lodge",
+        Body = "We had a fantastic stay at Bluestone.",
+        Score = 1,
+        AllowCreateNewGuest = true
+        };
+
+      ModelStateDictionary _modelState = new ModelStateDictionary();
+      ModelStateWrapper _modelStateWrapper = new ModelStateWrapper(_modelState);
+
+
+      // Act
+      CreateReviewResponse _response = (await _sut.CreateReview(_request, _modelStateWrapper));
+
+
+      // Assert
+
+      Console.Write(JsonSerializer.Serialize<ModelStateDictionary>(_modelState));
+
+      Assert.True(_modelStateWrapper.IsValid);
+      Assert.AreEqual(_expectedGuestCount, await _sut.CountGuests());
+      Assert.AreEqual(_expectedReviewCount, await _sut.CountReviews());
+      }
 
 
     }

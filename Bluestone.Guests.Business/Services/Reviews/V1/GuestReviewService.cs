@@ -1,9 +1,9 @@
 ﻿using bluestone.guests.business.Abstractions.V1;
+using bluestone.guests.business.Abstractions.V1.Extensions;
 using bluestone.guests.business.Services.Publishing;
 using bluestone.guests.business.Validations;
 using bluestone.guests.data.Repositories.Interfaces;
 using bluestone.guests.model.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace bluestone.guests.business.Services.Reviews.V1
   {
@@ -108,9 +108,37 @@ namespace bluestone.guests.business.Services.Reviews.V1
 
       if (validationState.IsValid == true)    // Validation was successful
         {
-        // First find the guest record
+        Guest _guest = null;
 
-        Guest _guest = await GetGuestByIDAsync(reviewRequest.GuestID);
+
+        // First find the guest record - from the ID or from the Email Address
+
+        if (reviewRequest.GuestID != Guid.Empty)
+          {
+          _guest = await GetGuestByIDAsync(reviewRequest.GuestID);
+          }
+        else
+          {
+          _guest = await GetGuestByEmailAsync(reviewRequest.GuestEmail);
+
+
+          // Create a new guest if one not found and the AllowCreateNewGuest is true.
+          // Note: this is only allowed if a valid email has been provided.
+
+          if (_guest == null && reviewRequest.AllowCreateNewGuest == true)
+            {
+            _guest = new Guest()
+              {
+              Email = reviewRequest.GuestEmail
+              };
+
+            await _unitOfWork.Guests.AddAsync(_guest);
+            }
+          }
+
+
+
+
 
         if (_guest != null)
           {
@@ -128,14 +156,9 @@ namespace bluestone.guests.business.Services.Reviews.V1
           await _unitOfWork.CommitAsync();
 
 
-          _response = new CreateReviewResponse()
-            {
-            ID = _newReview.ID,
-            GuestID = _newReview.GuestID,
-            Title = reviewRequest.Title,
-            Body = reviewRequest.Body,
-            Score = reviewRequest.Score
-            };
+          await PublishToSocialsIfGoodScoreAsync(_newReview);
+
+          _response = _newReview.ToCreateReviewResponse();
           }
         else
           validationState.AddError("Guest", "The specified guest does not exist");
@@ -146,6 +169,40 @@ namespace bluestone.guests.business.Services.Reviews.V1
       return _response;
       }
 
+
+
+
+
+
+    private async Task PublishToSocialsIfGoodScoreAsync(Review review, CancellationToken cancellationToken = default)
+      {
+      if(review.Score >= 4)
+        await _reviewPublishingService.PublishAsync(review, cancellationToken);
+      }
+
+
+
+
+
+
+    public async Task<ReviewsOverviewResponse> ReviewsOverview()
+      {
+      ReviewsOverviewResponse _response = new ReviewsOverviewResponse();
+
+      _response.StarRatings.AddRange(await _unitOfWork.Reviews.GetReviewStarRatings());
+
+      _response.ReviewCount = _response.StarRatings.Sum(rating => rating.Reviews);
+
+      int _totalScore = _response.StarRatings.Sum(rating => rating.Score * rating.Reviews);
+
+
+      _response.StarRatings.ForEach(rating => rating.Percentage = (_response.ReviewCount > 0) ? (((double)rating.Reviews * 100.0 / (double)_response.ReviewCount) ) : 0);
+
+
+      _response.AverageStarRating = (_response.ReviewCount != 0) ? (double)_totalScore / (double)_response.ReviewCount : 0;
+
+      return _response;
+      }
     }
 
 

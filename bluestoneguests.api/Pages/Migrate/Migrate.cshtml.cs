@@ -6,6 +6,10 @@ using System.Text.Json;
 
 namespace bluestoneguests.api.Pages.Migrate
   {
+
+  /// <summary>
+  /// A Simple method for migrating the database and seeding it with the contents of the TestData.json file.
+  /// </summary>
   public class MigrateModel : PageModel
     {
     private readonly IServiceProvider _serviceProvider;

@@ -13,6 +13,7 @@ namespace bluestone.guests.business.Services.Reviews.V1
     public Task<IEnumerable<Guest>> GetAllGuestsAsync();
     public Task<IEnumerable<ReviewResponse>> GetAllReviewsAsync();
     public Task<CreateReviewResponse> CreateReview(CreateReviewRequest reviewRequest, IValidationDictionary validationState);
+    public Task<ReviewsOverviewResponse> ReviewsOverview();
     public Task<int> CountReviews();
     }
   }

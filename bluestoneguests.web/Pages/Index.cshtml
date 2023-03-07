@@ -1,0 +1,172 @@
+﻿@page
+@using bluestone.guests.business.Abstractions.V1.Extensions
+@model IndexModel
+@{
+  ViewData["Title"] = "Home page";
+}
+
+
+<div class="container-fluid container-lg">
+
+  <h1 class="display-4">
+    Reviews
+  </h1>
+
+
+  <div class="bg-white shadow my-3 p-3">
+
+    @if (Model.ReviewsOverview != null)
+      {
+
+      <h4>Ratings</h4>
+
+      <p class="star-rating">
+        <b>@Model.ReviewsOverview.ReviewCount reviews - average: @Model.ReviewsOverview.AverageStarRating.ToString("N2") out of 5</b>
+      </p>
+
+      @if (Model.ReviewsOverview.StarRatings != null)
+        {
+        @foreach (var starRating in @Model.ReviewsOverview.StarRatings)
+          {
+          string _percentage = starRating.Percentage.ToString("N2");
+          string _style = $"width: {_percentage}%";
+
+          <div class="row py-3 align-items-center">
+            <div class="col-2 text-black">@starRating.Name</div>
+
+            <div class="col">
+
+              <div class="progress" style="height: 3em;">
+
+                <div style="@_style" aria-valuemax="100" aria-valuemin="0" aria-valuenow="@_percentage" role="progressbar" class="progress-bar bg-primary">
+
+                  @*<span class="sr-only">@starRating.Reviews out of [TotalReviews]</span>*@
+                </div>
+              </div>
+            </div>
+            <div class="col-2 text-black text-end">@_percentage %</div>
+          </div>
+          }
+
+        }
+      }
+    else
+      {
+      <p>Reviews are not currently available.</p>
+      }
+
+    <hr />
+    <div class="text-end"><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#newReview" aria-expanded="false" aria-controls="newReview">Add Review</button></div>
+    
+
+    <div class="collapse m-3" id="newReview">
+      <form id="formReview" class="needs-validation" novalidate method="post">
+
+        <div class="row">
+          <label for="email">Email:</label>
+          <input type="text" class="form-control" id="email" name="@nameof(Model.AddReviewViewModel.Email)" value="@Model.AddReviewViewModel.Email" required>
+          <div class="invalid-feedback">Please provide a valid email address.</div>
+        </div>
+
+        <div class="row">
+          <label for="email">Title:</label>
+          <input type="text" class="form-control" id="email" name="@nameof(Model.AddReviewViewModel.Title)" value="@Model.AddReviewViewModel.Title" required>
+          <div class="invalid-feedback">Please provide a title.</div>
+        </div>
+
+        <div class="row">
+          <label for="email">Body:</label>
+
+          <textarea rows="10" id="addressNotes" class="form-control" name="@nameof(Model.AddReviewViewModel.Body)" value="@(Model.AddReviewViewModel.Body)" required></textarea>
+          <div class="invalid-feedback">Please provide a body.</div>
+        </div>
+
+        <div class="row">
+          <label for="email">Score:</label>
+          <select class="form-control" id="addressCountry" name="@nameof(@Model.AddReviewViewModel.Score)" value="@Model.AddReviewViewModel.Score" asp-for="@Model.AddReviewViewModel.Score" asp-items="@Model.Scores" required="true">
+            <option value="">Choose...</option>
+          </select>
+
+          <div class="invalid-feedback">Please provide a ccore.</div>
+        </div>
+
+
+        <button type="button" class="btn btn-sm btn-primary mt-2" id="save-review" data-disable-on-send="true">Save</button>
+
+      </form>
+    </div>
+
+  </div>
+
+  <div class="bg-white shadow my-3 p-3">
+    <h4>Reviews</h4>
+    @if (Model.Reviews != null)
+      {
+      @foreach (var _review in @Model.Reviews)
+        {
+        <div class="review mb-3">
+          <h5>@_review.Title</h5>
+          <h6>@_review.Guest.FullName()</h6>
+          <p>@_review.Body</p>
+        </div>
+
+        }
+      }
+
+  </div>
+</div>
+
+
+
+@section PageScripts{
+  <script type="text/javascript">
+    if (!$.apx) { $.apx = new Object(); };
+
+    $.apx.sendForm = function (el, options) {
+      var base = this;
+      base.$el = $(el);
+      base.el = el;
+
+      base.init = () => {
+        base.options = $.extend({}, $.apx.sendForm.defaultOptions, options);
+
+        return base;
+      };
+
+      base.validate = (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        return base.isValid();
+      };
+
+      base.isValid = () => {
+        base.setValidated();
+
+        return base.$el[0].checkValidity();
+      };
+
+      base.postIfValid = () => { if (base.isValid()) base.submit(); };
+
+      base.submit = () => {
+        base.$el[0].submit(true);
+      };
+
+      base.setValidated = () => { base.$el.addClass('was-validated'); };
+      base.clearValidated = () => { base.$el.removeClass('was-validated'); };
+
+      return base.init();
+    };
+
+    $.apx.sendForm.defaultOptions = {};
+  </script>
+  <script type="text/javascript" >
+      $(() => {
+      window.contactForm = new $.apx.sendForm($("#formReview")[0], {});
+
+      $('#save-review').on('click', event => window.contactForm.postIfValid());
+    });
+  </script>
+  }
+
+

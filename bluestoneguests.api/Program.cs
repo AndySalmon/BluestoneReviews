@@ -1,3 +1,4 @@
+using bluestone.guests.business.Services.Publishing;
 using bluestone.guests.business.Services.Reviews.V1;
 using bluestone.guests.data;
 using bluestone.guests.data.Repositories;
@@ -20,13 +21,17 @@ namespace bluestoneguests.api
 
       // Add services to the container.
       builder.Services.AddRazorPages();
-      builder.Services.AddControllers();
+      builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+                        options.JsonSerializerOptions.PropertyNamingPolicy = null); 
+
       // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
       builder.Services.AddEndpointsApiExplorer();
       builder.Services.AddSwaggerGen();
 
       builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
       builder.Services.AddScoped<IGuestReviewService, GuestReviewService>();
+      builder.Services.AddScoped<IPublishReview, GuestReviewPublishingService>();
 
 
 

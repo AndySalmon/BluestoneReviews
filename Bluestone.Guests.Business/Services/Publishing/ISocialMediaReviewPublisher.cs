@@ -4,6 +4,6 @@ namespace bluestone.guests.business.Services.Publishing
   {
   public interface ISocialMediaReviewPublisher
     {
-    Task PublishAsync(Review review);
+    Task PublishAsync(Review review, CancellationToken cancellationToken = default);
     }
   }

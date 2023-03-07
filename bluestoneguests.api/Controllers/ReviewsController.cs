@@ -19,13 +19,18 @@ namespace bluestoneguests.api.Controllers
       _reviewService = reviewService;
       }
 
-    [HttpGet(Name = "reviews")]
+
+
+    [HttpGet("all")]
     public async Task<IEnumerable<ReviewResponse>> Get()
       {
       return await _reviewService.GetAllReviewsAsync();
       }
 
-    [HttpPost(Name = "review")]
+
+
+
+    [HttpPost("review")]
     public async Task<ActionResult<CreateReviewResponse>> CreateReview([FromBody] CreateReviewRequest newReview)
       {
       ModelStateDictionary _modelState = new ModelStateDictionary();
@@ -35,6 +40,17 @@ namespace bluestoneguests.api.Controllers
 
       if (_modelStateWrapper.IsValid == false)
         return ValidationProblem(_modelState);
+
+      return Ok(_response);
+      }
+
+
+
+
+    [HttpGet("overview")]
+    public async Task<ActionResult<ReviewsOverviewResponse>> ReviewsOverview()
+      {
+      ReviewsOverviewResponse _response = await _reviewService.ReviewsOverview();
 
       return Ok(_response);
       }
